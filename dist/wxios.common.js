@@ -46,7 +46,7 @@ function forEach(obj, fn) {
   if (Array.isArray(obj)) {
     obj.forEach(fn);
   } else {
-    obj.keys(obj).forEach(function (key) {
+    Object.keys(obj).forEach(function (key) {
       fn.call(null, obj[key], key, obj);
     });
   }
