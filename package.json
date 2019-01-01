@@ -2,7 +2,7 @@
   "name": "miniprogram-wxios",
   "version": "1.0.0",
   "description": "针对 wx.request 接口进行二次封装。",
-  "main": "index.js",
+  "main": "/dist/wxios.common.js",
   "scripts": {
     "dev": "rollup -c -w",
     "build": "rollup -c"
