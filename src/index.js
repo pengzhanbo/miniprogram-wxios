@@ -4,6 +4,7 @@ import {
 } from './lib/utils';
 import Wxios from './lib/Wxios';
 import defaults from './lib/defaults';
+import CancelToken from './lib/cancel';
 
 function createInstance(defaultConfig) {
     var context = new Wxios(defaultConfig);
@@ -20,6 +21,8 @@ wxios.Wxios = Wxios;
 wxios.create = function create(instanceConfig) {
     return createInstance(Object.assign({}, defaults, instanceConfig || {}));
 };
+
+wxios.CancelToken = CancelToken;
 
 wxios.all = function all(promises) {
     return Promise.all(promises);

@@ -140,7 +140,7 @@ function request(option) {
   }
 
   return new Promise(function (resolve, reject) {
-    wx.request({
+    var request = wx.request({
       url: option.url,
       data: option.data,
       header: option.headers,
@@ -160,6 +160,13 @@ function request(option) {
         typeof option.complete === 'function' && option.complete(res);
       }
     });
+
+    if (request && option.cancelToken) {
+      option.cancelToken.promise.then(function (cancel) {
+        request.abort && request.abort();
+        reject(cancel);
+      });
+    }
   });
 }
 
@@ -242,6 +249,33 @@ forEach(['delete', 'get', 'head', 'post', 'put', 'patch'], function (method) {
   defaults.headers[method] = {};
 });
 
+var CancelToken = function CancelToken(executor) {
+  _classCallCheck(this, CancelToken);
+
+  if (typeof executor !== 'function') {
+    throw new Error('executor must be a function!');
+  }
+
+  var resolvePromise;
+  this.promise = new Promise(function (resolve, reject) {
+    resolvePromise = resolve;
+  });
+  executor(function (cancel) {
+    resolvePromise(cancel);
+  });
+};
+
+CancelToken.source = function () {
+  var cancel;
+  var token = new CancelToken(function (c) {
+    cancel = c;
+  });
+  return {
+    token: token,
+    cancel: cancel
+  };
+};
+
 function createInstance(defaultConfig) {
   var context = new Wxios(defaultConfig);
   var instance = bind(Wxios.prototype.request, context);
@@ -256,6 +290,8 @@ wxios.Wxios = Wxios;
 wxios.create = function create(instanceConfig) {
   return createInstance(Object.assign({}, defaults, instanceConfig || {}));
 };
+
+wxios.CancelToken = CancelToken;
 
 wxios.all = function all(promises) {
   return Promise.all(promises);

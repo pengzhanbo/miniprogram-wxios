@@ -3,7 +3,7 @@ export default function request(option) {
         throw new Error('[miniProgram wxios] wx is not found!');
     }
     return new Promise((resolve, reject) => {
-        wx.request({
+        let request = wx.request({
             url: option.url,
             data: option.data,
             header: option.headers,
@@ -23,5 +23,11 @@ export default function request(option) {
                 typeof option.complete === 'function' && option.complete(res);
             }
         });
+        if (request && option.cancelToken) {
+            option.cancelToken.promise.then(cancel => {
+                request.abort && request.abort();
+                reject(cancel);
+            });
+        }
     });
 }
