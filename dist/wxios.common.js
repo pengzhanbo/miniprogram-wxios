@@ -142,6 +142,9 @@ function request(option) {
   }
 
   return new Promise(function (resolve, reject) {
+    var timeout = option.timeout || 0;
+    var timer;
+    var isTimeout = false;
     var request = wx.request({
       url: option.url,
       data: option.data,
@@ -149,17 +152,20 @@ function request(option) {
       method: option.method.toUpperCase(),
       dataType: 'json',
       success: function success(response) {
-        resolve({
+        !isTimeout && resolve({
           response: response.data,
           headers: response.header,
           statusCode: response.statusCode
         });
+        timer && clearTimeout(timer);
       },
       fail: function fail(res) {
-        reject(res);
+        !isTimeout && reject(res);
+        timer && clearTimeout(timer);
       },
       complete: function complete(res) {
-        typeof option.complete === 'function' && option.complete(res);
+        !isTimeout && typeof option.complete === 'function' && option.complete(res);
+        timer && clearTimeout(timer);
       }
     });
 
@@ -167,7 +173,23 @@ function request(option) {
       option.cancelToken.promise.then(function (cancel) {
         request.abort && request.abort();
         reject(cancel);
+        timer && clearTimeout(timer);
       });
+    }
+
+    if (timeout) {
+      timer = setTimeout(function () {
+        isTimeout = true;
+        reject({
+          response: {
+            status: 408,
+            message: "request timeout ".concat(timeout, "ms")
+          },
+          message: "request timeout ".concat(timeout, "ms")
+        });
+        request.abort && request.abort();
+        clearTimeout(timer);
+      }, timeout);
     }
   });
 }

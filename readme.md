@@ -102,6 +102,8 @@
         baseURL: '',
         // 公共 headers 配置
         headers: {},
+        // 接口超时时间， 单位 ms， 默认为 0，不做超时处理
+        timeout: 0
     }
     ```
 
