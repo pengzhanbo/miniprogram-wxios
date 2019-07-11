@@ -61,7 +61,7 @@
         baseURL: 'http://localhost'
     });
     ```
-    新实例拥有 wxios下挂载的所有request方法。
+    新实例拥有 wxios下挂载的所有request方法。
 
 6. 请求拦截器
 
