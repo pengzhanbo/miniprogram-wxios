@@ -1,6 +1,6 @@
 {
   "name": "@wehotel/miniprogram-wxios",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "针对 wx.request 接口进行二次封装。",
   "main": "dist/wxios.common.js",
   "module": "dist/wxios.esm.js",
